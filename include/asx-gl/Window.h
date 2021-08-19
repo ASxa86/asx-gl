@@ -1,6 +1,8 @@
 #pragma once
 
 #include <asx-gl/Pimpl.h>
+#include <asx-gl/Shader.h>
+#include <asx-gl/VertexBufferObject.h>
 #include <asx-gl/export.hxx>
 #include <glm/glm.hpp>
 #include <string_view>
@@ -22,19 +24,24 @@ namespace asx
 		Window& operator=(const Window&) = delete;
 
 		///
-		///
-		///
-		void clear(const glm::vec4& color = {0.0f, 0.0f, 0.0f, 1.0f});
-
-		///
 		///	\brief Return the open state of this window.
 		/// \return bool True while the window remains open.
 		///
 		bool open() const noexcept;
 
 		///
+		///
+		///
+		void clear(const glm::vec4& color = {0.0f, 0.0f, 0.0f, 1.0f});
+
+		///
+		///
+		///
+		void draw(const VertexBufferObject& x, const Shader& s) const;
+
+		///
 		///	\brief Perform swap buffers.
-		/// 
+		///
 		void display() const noexcept;
 
 		///

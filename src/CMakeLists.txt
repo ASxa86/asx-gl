@@ -6,10 +6,19 @@ target_sources(${PROJECT_NAME} PRIVATE
 	${PROJECT_INCLUDE_DIR}/asx-gl/Window.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Pimpl.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/PimplImpl.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/Primitive.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/Renderer.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/Shader.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/Vertex.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/VertexBufferObject.h
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
 	Window.cpp
+	Renderer.cpp
+	Shader.cpp
+	Vertex.cpp
+	VertexBufferObject.cpp
 )
 
 find_package(libpng REQUIRED COMPONENTS system)

@@ -4,6 +4,7 @@
 
 #include <GLFW/glfw3.h>
 #include <asx-gl/PimplImpl.h>
+#include <asx-gl/Renderer.h>
 
 using namespace asx;
 
@@ -16,6 +17,7 @@ struct Window::Impl
 	std::string title;
 	glm::vec<2, int> size{};
 	GLFWwindow* window{nullptr};
+	Renderer renderer;
 	int glfwInitialized{GLFW_FALSE};
 	int gladInitialized{GL_FALSE};
 };
@@ -52,6 +54,11 @@ Window& Window::operator=(Window&& x) noexcept
 	return *this;
 }
 
+bool Window::open() const noexcept
+{
+	return glfwWindowShouldClose(this->pimpl->window) == GLFW_FALSE;
+}
+
 void Window::clear(const glm::vec4& color)
 {
 	glViewport(0, 0, this->size().x, this->size().y);
@@ -59,9 +66,9 @@ void Window::clear(const glm::vec4& color)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-bool Window::open() const noexcept
+void Window::draw(const VertexBufferObject& x, const Shader& s) const
 {
-	return glfwWindowShouldClose(this->pimpl->window) == GLFW_FALSE;
+	this->pimpl->renderer.draw(x, s);
 }
 
 void Window::display() const noexcept
