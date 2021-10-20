@@ -2,7 +2,7 @@ project(asx-gl)
 
 add_library(${PROJECT_NAME})
 
-target_sources(${PROJECT_NAME} PRIVATE
+target_sources(${PROJECT_NAME} PUBLIC
 	${PROJECT_INCLUDE_DIR}/asx-gl/Window.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Pimpl.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/PimplImpl.h
@@ -10,15 +10,19 @@ target_sources(${PROJECT_NAME} PRIVATE
 	${PROJECT_INCLUDE_DIR}/asx-gl/Renderer.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Shader.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Vertex.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/VertexArrayObject.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/VertexBufferObject.h
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
-	Window.cpp
+	GLCheck.cpp
+	GLCheck.h
 	Renderer.cpp
 	Shader.cpp
 	Vertex.cpp
+	VertexArrayObject.cpp
 	VertexBufferObject.cpp
+	Window.cpp
 )
 
 find_package(libpng REQUIRED COMPONENTS system)

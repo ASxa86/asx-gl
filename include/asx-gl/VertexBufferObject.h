@@ -17,8 +17,15 @@ namespace asx
 		};
 
 		VertexBufferObject(Primitive x);
+		~VertexBufferObject();
 
-		void apply(const std::vector<Vertex>& vertices);
+		VertexBufferObject(VertexBufferObject&& x) noexcept;
+		VertexBufferObject& operator=(VertexBufferObject&& x) noexcept;
+
+		VertexBufferObject(const VertexBufferObject&) = delete;
+		VertexBufferObject& operator=(const VertexBufferObject&) = delete;
+
+		void load(const std::vector<Vertex>& vertices);
 
 		void bind() const;
 		void unbind() const;
@@ -26,6 +33,7 @@ namespace asx
 		Primitive getPrimitive() const;
 
 		const std::vector<Vertex>& getVertices() const;
+		unsigned int getHandle() const noexcept;
 
 	private:
 		std::vector<Vertex> vertices;

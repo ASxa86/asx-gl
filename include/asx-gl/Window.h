@@ -2,6 +2,7 @@
 
 #include <asx-gl/Pimpl.h>
 #include <asx-gl/Shader.h>
+#include <asx-gl/VertexArrayObject.h>
 #include <asx-gl/VertexBufferObject.h>
 #include <asx-gl/export.hxx>
 #include <glm/glm.hpp>
@@ -38,6 +39,7 @@ namespace asx
 		///
 		///
 		void draw(const VertexBufferObject& x, const Shader& s) const;
+		void draw(const VertexArrayObject& x, const Shader& s) const;
 
 		///
 		///	\brief Perform swap buffers.

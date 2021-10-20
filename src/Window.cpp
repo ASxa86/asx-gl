@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <asx-gl/PimplImpl.h>
 #include <asx-gl/Renderer.h>
+#include "GLCheck.h"
 
 using namespace asx;
 
@@ -61,12 +62,18 @@ bool Window::open() const noexcept
 
 void Window::clear(const glm::vec4& color)
 {
-	glViewport(0, 0, this->size().x, this->size().y);
-	glClearColor(color.r, color.g, color.b, color.a);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glCheck(glViewport(0, 0, this->size().x, this->size().y));
+	glCheck(glClearColor(color.r, color.g, color.b, color.a));
+	glCheck(glClear(GL_COLOR_BUFFER_BIT));
 }
 
 void Window::draw(const VertexBufferObject& x, const Shader& s) const
+{
+	glfwMakeContextCurrent(this->pimpl->window);
+	this->pimpl->renderer.draw(x, s);
+}
+
+void Window::draw(const VertexArrayObject& x, const Shader& s) const
 {
 	this->pimpl->renderer.draw(x, s);
 }

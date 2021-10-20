@@ -4,12 +4,13 @@
 #include <iostream>
 #include <numeric>
 
+#include <asx-gl/VertexArrayObject.h>
 #include <asx-gl/VertexBufferObject.h>
 
 using namespace asx;
 
 constexpr std::string_view ShaderVertex = R"(
-	#version 330 core
+	#version 450 core
 	layout (location = 0) in vec3 aPos;
 
 	void main()
@@ -19,7 +20,7 @@ constexpr std::string_view ShaderVertex = R"(
 )";
 
 constexpr std::string_view ShaderFragment = R"(
-	#version 330 core
+	#version 450 core
 	out vec4 FragColor;
 
 	void main()
@@ -42,12 +43,19 @@ TEST(Window, Constructor)
 	Shader shader;
 	shader.loadFromMemory(ShaderVertex, ShaderFragment);
 
-	VertexBufferObject vbo{Primitive::Triangles};
+	VertexArrayObject vao;
+	// VertexBufferObject vbo{Primitive::Triangles};
 	std::vector<Vertex> vertices;
 	vertices.push_back({{-0.5f, -0.5f, 0.0f}});
 	vertices.push_back({{0.5f, -0.5f, 0.0f}});
 	vertices.push_back({{0.0f, 0.5f, 0.0f}});
-	vbo.apply(vertices);
+	// vbo.apply(vertices);
+	vao.addVBO(Primitive::Triangles, vertices);
+
+	vertices[0] = {{0.5f, 0.5f, 0.0f}};
+	vertices[1] = {{-0.5f, 0.5f, 0.0f}};
+	vertices[2] = {{0.0f, -0.5f, 0.0f}};
+	vao.addVBO(Primitive::Triangles, vertices);
 
 	EXPECT_TRUE(window.open());
 
@@ -66,7 +74,7 @@ TEST(Window, Constructor)
 		}
 
 		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
-		window.draw(vbo, shader);
+		window.draw(vao, shader);
 		window.display();
 
 		std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start;

@@ -1,6 +1,8 @@
 #include <asx-gl/Renderer.h>
 
 #include <glad/glad.h>
+#include <iostream>
+#include "GLCheck.h"
 
 using namespace asx;
 
@@ -11,6 +13,22 @@ void Renderer::draw(const VertexBufferObject& x, const Shader& s) const
 	s.bind();
 
 	this->drawArrays(x.getPrimitive(), 0, x.getVertices().size());
+
+	s.unbind();
+	x.unbind();
+}
+
+void Renderer::draw(const VertexArrayObject& x, const Shader& s) const
+{
+	// Bind VBO
+	x.bind();
+	s.bind();
+
+	for(const auto& vbo : x.getVBOs())
+	{
+		vbo.bind();
+		this->drawArrays(vbo.getPrimitive(), 0, vbo.getVertices().size());
+	}
 
 	s.unbind();
 	x.unbind();
@@ -38,5 +56,6 @@ void Renderer::drawArrays(Primitive x, int firstVertex, std::size_t count) const
 			break;
 	}
 
-	glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(count));
+
+	glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(count)));
 }

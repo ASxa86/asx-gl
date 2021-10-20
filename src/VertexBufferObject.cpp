@@ -1,39 +1,61 @@
 #include <asx-gl/VertexBufferObject.h>
 
 #include <glad/glad.h>
-#include <string_view>
+#include "GLCheck.h"
 
 using namespace asx;
 
 VertexBufferObject::VertexBufferObject(Primitive x) : primitive{x}
 {
-	glGenBuffers(1, &this->handle);
+	glCheck(glCreateBuffers(1, &this->handle));
 }
 
-void VertexBufferObject::apply(const std::vector<Vertex>& x)
+VertexBufferObject::~VertexBufferObject()
 {
-	this->bind();
+	if(this->handle != 0)
+	{
+		glCheck(glDeleteBuffers(1, &this->handle));
+	}
+}
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(std::decay_t<decltype(x)>::value_type) * x.size(), x.data(), GL_STATIC_DRAW);
+VertexBufferObject::VertexBufferObject(VertexBufferObject&& x) noexcept
+	: vertices{std::move(x.vertices)}, handle{x.handle}, primitive{x.primitive}, usage{x.usage}
+{
+	x.handle = 0;
+	x.primitive = static_cast<decltype(x.primitive)>(0);
+	x.usage = static_cast<decltype(x.usage)>(0);
+}
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+VertexBufferObject& VertexBufferObject::operator=(VertexBufferObject&& x) noexcept
+{
+	this->vertices = std::move(x.vertices);
+	this->handle = x.handle;
+	this->primitive = x.primitive;
+	this->usage = x.usage;
 
-	this->unbind();
+	x.handle = 0;
+	x.primitive = static_cast<decltype(x.primitive)>(0);
+	x.usage = static_cast<decltype(x.usage)>(0);
+
+	return *this;
+}
+
+void VertexBufferObject::load(const std::vector<Vertex>& x)
+{
+	// Size of floats in glm::vec3 in the vertex array.
+	glCheck(glNamedBufferStorage(this->handle, sizeof(Vertex) * x.size(), x.data(), GL_DYNAMIC_STORAGE_BIT));
 
 	this->vertices = x;
 }
 
 void VertexBufferObject::bind() const
 {
-	glBindBuffer(GL_ARRAY_BUFFER, this->handle);
-	glEnableVertexAttribArray(0);
+	// glCheck(glBindBuffer(GL_ARRAY_BUFFER, this->handle));
 }
 
 void VertexBufferObject::unbind() const
 {
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 Primitive VertexBufferObject::getPrimitive() const
@@ -44,4 +66,9 @@ Primitive VertexBufferObject::getPrimitive() const
 const std::vector<Vertex>& VertexBufferObject::getVertices() const
 {
 	return this->vertices;
+}
+
+unsigned int VertexBufferObject::getHandle() const noexcept
+{
+	return this->handle;
 }
