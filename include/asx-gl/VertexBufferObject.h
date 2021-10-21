@@ -16,7 +16,7 @@ namespace asx
 			Dynamic
 		};
 
-		VertexBufferObject(Primitive x);
+		VertexBufferObject(Primitive x, const std::vector<Vertex>& vertices);
 		~VertexBufferObject();
 
 		VertexBufferObject(VertexBufferObject&& x) noexcept;
@@ -24,11 +24,6 @@ namespace asx
 
 		VertexBufferObject(const VertexBufferObject&) = delete;
 		VertexBufferObject& operator=(const VertexBufferObject&) = delete;
-
-		void load(const std::vector<Vertex>& vertices);
-
-		void bind() const;
-		void unbind() const;
 
 		Primitive getPrimitive() const;
 

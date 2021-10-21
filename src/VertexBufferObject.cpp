@@ -5,9 +5,10 @@
 
 using namespace asx;
 
-VertexBufferObject::VertexBufferObject(Primitive x) : primitive{x}
+VertexBufferObject::VertexBufferObject(Primitive x, const std::vector<Vertex>& vertices) : vertices{vertices}, primitive{x}
 {
 	glCheck(glCreateBuffers(1, &this->handle));
+	glCheck(glNamedBufferStorage(this->handle, sizeof(Vertex) * this->vertices.size(), this->vertices.data(), GL_DYNAMIC_STORAGE_BIT));
 }
 
 VertexBufferObject::~VertexBufferObject()
@@ -38,24 +39,6 @@ VertexBufferObject& VertexBufferObject::operator=(VertexBufferObject&& x) noexce
 	x.usage = static_cast<decltype(x.usage)>(0);
 
 	return *this;
-}
-
-void VertexBufferObject::load(const std::vector<Vertex>& x)
-{
-	// Size of floats in glm::vec3 in the vertex array.
-	glCheck(glNamedBufferStorage(this->handle, sizeof(Vertex) * x.size(), x.data(), GL_DYNAMIC_STORAGE_BIT));
-
-	this->vertices = x;
-}
-
-void VertexBufferObject::bind() const
-{
-	// glCheck(glBindBuffer(GL_ARRAY_BUFFER, this->handle));
-}
-
-void VertexBufferObject::unbind() const
-{
-	// glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 Primitive VertexBufferObject::getPrimitive() const

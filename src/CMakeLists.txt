@@ -3,7 +3,7 @@ project(asx-gl)
 add_library(${PROJECT_NAME})
 
 target_sources(${PROJECT_NAME} PUBLIC
-	${PROJECT_INCLUDE_DIR}/asx-gl/Window.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/IndexBufferObject.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Pimpl.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/PimplImpl.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/Primitive.h
@@ -12,11 +12,13 @@ target_sources(${PROJECT_NAME} PUBLIC
 	${PROJECT_INCLUDE_DIR}/asx-gl/Vertex.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/VertexArrayObject.h
 	${PROJECT_INCLUDE_DIR}/asx-gl/VertexBufferObject.h
+	${PROJECT_INCLUDE_DIR}/asx-gl/Window.h
 )
 
 target_sources(${PROJECT_NAME} PRIVATE
 	GLCheck.cpp
 	GLCheck.h
+	IndexBufferObject.cpp
 	Renderer.cpp
 	Shader.cpp
 	Vertex.cpp

@@ -23,22 +23,33 @@ VertexArrayObject::~VertexArrayObject()
 	glCheck(glDeleteVertexArrays(1, &this->handle));
 }
 
+void VertexArrayObject::addVBO(VertexBufferObject&& x)
+{
+	glCheck(glVertexArrayVertexBuffer(this->handle, binding, x.getHandle(), 0, sizeof(float) * 3));
+	this->vbos.push_back(std::move(x));
+}
+
 void VertexArrayObject::addVBO(Primitive type, const std::vector<Vertex>& x)
 {
-	this->bind();
-
-	VertexBufferObject vbo(type);
-	vbo.load(x);
+	VertexBufferObject vbo(type, x);
 	glCheck(glVertexArrayVertexBuffer(this->handle, binding, vbo.getHandle(), 0, sizeof(float) * 3));
 	this->vbos.push_back(std::move(vbo));
-
-	this->vbos.back().unbind();
-	this->unbind();
 }
 
 const std::vector<VertexBufferObject>& VertexArrayObject::getVBOs() const
 {
 	return this->vbos;
+}
+
+void VertexArrayObject::setIDO(IndexBufferObject&& x)
+{
+	glCheck(glVertexArrayElementBuffer(this->handle, x.getHandle()));
+	this->ido = std::move(x);
+}
+
+const IndexBufferObject& VertexArrayObject::getIDO() const
+{
+	return this->ido;
 }
 
 void VertexArrayObject::bind() const

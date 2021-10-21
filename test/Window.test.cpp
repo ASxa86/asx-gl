@@ -44,18 +44,21 @@ TEST(Window, Constructor)
 	shader.loadFromMemory(ShaderVertex, ShaderFragment);
 
 	VertexArrayObject vao;
-	// VertexBufferObject vbo{Primitive::Triangles};
+
 	std::vector<Vertex> vertices;
 	vertices.push_back({{-0.5f, -0.5f, 0.0f}});
 	vertices.push_back({{0.5f, -0.5f, 0.0f}});
-	vertices.push_back({{0.0f, 0.5f, 0.0f}});
-	// vbo.apply(vertices);
-	vao.addVBO(Primitive::Triangles, vertices);
+	vertices.push_back({{0.5f, 0.5f, 0.0f}});
+	vertices.push_back({{-0.5f, 0.5f, 0.0f}});
+	VertexBufferObject vbo{Primitive::Triangles, vertices};
+	vao.addVBO(std::move(vbo));
 
-	vertices[0] = {{0.5f, 0.5f, 0.0f}};
-	vertices[1] = {{-0.5f, 0.5f, 0.0f}};
-	vertices[2] = {{0.0f, -0.5f, 0.0f}};
-	vao.addVBO(Primitive::Triangles, vertices);
+	std::vector<unsigned int> indices{{0, 1, 3, 1, 2, 3}};
+	IndexBufferObject ido{indices};
+	vao.setIDO(std::move(ido));
+
+	// vertices[2] = {{0.0f, -0.8f, 0.0f}};
+	// vao.addVBO(Primitive::Triangles, vertices);
 
 	EXPECT_TRUE(window.open());
 

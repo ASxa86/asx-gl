@@ -15,6 +15,7 @@ namespace asx
 
 	protected:
 		void drawArrays(Primitive x, int first, std::size_t count) const;
+		void drawElements(Primitive x, const std::vector<unsigned int>& indices) const;
 
 	private:
 	};
