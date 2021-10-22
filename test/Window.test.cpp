@@ -4,8 +4,8 @@
 #include <iostream>
 #include <numeric>
 
+#include <asx-gl/ElementBufferObject.h>
 #include <asx-gl/VertexArrayObject.h>
-#include <asx-gl/VertexBufferObject.h>
 
 using namespace asx;
 
@@ -36,29 +36,24 @@ namespace asx
 	};
 }
 
-TEST(Window, Constructor)
+TEST(Window, ElementBufferObject)
 {
 	Window window;
 
 	Shader shader;
 	shader.loadFromMemory(ShaderVertex, ShaderFragment);
 
-	VertexArrayObject vao;
+	ElementBufferObject ebo{Primitive::Triangles};
 
 	std::vector<Vertex> vertices;
 	vertices.push_back({{-0.5f, -0.5f, 0.0f}});
 	vertices.push_back({{0.5f, -0.5f, 0.0f}});
 	vertices.push_back({{0.5f, 0.5f, 0.0f}});
 	vertices.push_back({{-0.5f, 0.5f, 0.0f}});
-	VertexBufferObject vbo{Primitive::Triangles, vertices};
-	vao.addVBO(std::move(vbo));
+	ebo.setVertices(vertices);
 
 	std::vector<unsigned int> indices{{0, 1, 3, 1, 2, 3}};
-	IndexBufferObject ido{indices};
-	vao.setIDO(std::move(ido));
-
-	// vertices[2] = {{0.0f, -0.8f, 0.0f}};
-	// vao.addVBO(Primitive::Triangles, vertices);
+	ebo.setIndices(indices);
 
 	EXPECT_TRUE(window.open());
 
@@ -66,7 +61,52 @@ TEST(Window, Constructor)
 	std::vector<std::chrono::duration<double>> frames;
 	frames.reserve(10'000'000);
 
-	while(window.open() == true && count < 1000000000)
+	while(window.open() == true && count < 10000)
+	{
+		auto start = std::chrono::steady_clock::now();
+		count++;
+
+		asx::Event e;
+		while(window.pollEvent(e) == true)
+		{
+		}
+
+		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
+		window.draw(ebo, shader);
+		window.display();
+
+		std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start;
+		frames.push_back(elapsed);
+	}
+
+	const auto sum = std::accumulate(std::begin(frames), std::end(frames), decltype(frames)::value_type::zero());
+	const auto avg = sum / frames.size();
+	std::cout << "Elapsed: " << avg.count() << " FPS: " << 1.0 / avg.count() << "\n";
+}
+
+TEST(Window, VertexArrayObject)
+{
+	Window window;
+
+	Shader shader;
+	shader.loadFromMemory(ShaderVertex, ShaderFragment);
+
+	VertexArrayObject vao{Primitive::TriangleStrip};
+
+	std::vector<Vertex> vertices;
+	vertices.push_back({{-0.5f, -0.5f, 0.0f}});
+	vertices.push_back({{0.5f, -0.5f, 0.0f}});
+	vertices.push_back({{-0.5f, 0.5f, 0.0f}});
+	vertices.push_back({{0.5f, 0.5f, 0.0f}});
+	vao.setVertices(vertices);
+
+	EXPECT_TRUE(window.open());
+
+	auto count = 0;
+	std::vector<std::chrono::duration<double>> frames;
+	frames.reserve(10'000'000);
+
+	while(window.open() == true && count < 10000)
 	{
 		auto start = std::chrono::steady_clock::now();
 		count++;

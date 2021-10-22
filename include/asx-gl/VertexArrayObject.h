@@ -1,36 +1,36 @@
 #pragma once
 
-#include <asx-gl/VertexBufferObject.h>
-#include <asx-gl/IndexBufferObject.h>
-#include <optional>
+#include <asx-gl/Primitive.h>
+#include <asx-gl/Vertex.h>
+#include <asx-gl/export.hxx>
+#include <vector>
 
 namespace asx
 {
-	class ASX_GL_EXPORT VertexArrayObject
+	class ASX_GL_EXPORT VertexArrayObject final
 	{
 	public:
-		VertexArrayObject();
+		VertexArrayObject(Primitive x);
 		~VertexArrayObject();
 
-		VertexArrayObject(VertexArrayObject&&) noexcept = delete;
-		VertexArrayObject& operator=(VertexArrayObject&&) noexcept = delete;
+		VertexArrayObject(VertexArrayObject&&) noexcept;
+		VertexArrayObject& operator=(VertexArrayObject&&) noexcept;
 
 		VertexArrayObject(const VertexArrayObject&) = delete;
 		VertexArrayObject& operator=(const VertexArrayObject&) = delete;
 
-		void addVBO(VertexBufferObject&& x);
-		void addVBO(Primitive type, const std::vector<Vertex>& x);
-		const std::vector<VertexBufferObject>& getVBOs() const;
+		void setVertices(const std::vector<Vertex>& x);
+		const std::vector<Vertex>& getVertices() const;
 
-		void setIDO(IndexBufferObject&& x);
-		const IndexBufferObject& getIDO() const;
+		Primitive getPrimitive() const;
 
 		void bind() const;
 		void unbind() const;
 
 	private:
-		std::vector<VertexBufferObject> vbos;
-		IndexBufferObject ido;
-		unsigned int handle{};
+		std::vector<Vertex> vertices;
+		unsigned int handleVAO{};
+		unsigned int handleVBO{};
+		Primitive primitive{};
 	};
 }

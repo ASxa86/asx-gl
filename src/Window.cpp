@@ -67,13 +67,12 @@ void Window::clear(const glm::vec4& color)
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Window::draw(const VertexBufferObject& x, const Shader& s) const
+void Window::draw(const VertexArrayObject& x, const Shader& s) const
 {
-	glfwMakeContextCurrent(this->pimpl->window);
 	this->pimpl->renderer.draw(x, s);
 }
 
-void Window::draw(const VertexArrayObject& x, const Shader& s) const
+void Window::draw(const ElementBufferObject& x, const Shader& s) const
 {
 	this->pimpl->renderer.draw(x, s);
 }

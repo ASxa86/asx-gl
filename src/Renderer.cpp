@@ -7,14 +7,47 @@
 
 using namespace asx;
 
-void Renderer::draw(const VertexBufferObject& x, const Shader& s) const
+namespace
 {
-	// Bind VBO
-	s.bind();
+	GLenum ToGLEnum(Primitive x)
+	{
+		GLenum mode{};
 
-	this->drawArrays(x.getPrimitive(), 0, x.getVertices().size());
+		switch(x)
+		{
+			case Primitive::Points:
+				mode = GL_POINTS;
+				break;
 
-	s.unbind();
+			case Primitive::Lines:
+				mode = GL_LINES;
+				break;
+
+			case Primitive::LineLoop:
+				mode = GL_LINE_LOOP;
+				break;
+
+			case Primitive::LineStrip:
+				mode = GL_LINE_STRIP;
+				break;
+
+			case Primitive::Triangles:
+				mode = GL_TRIANGLES;
+				break;
+
+			case Primitive::TriangleFan:
+				mode = GL_TRIANGLE_FAN;
+
+			case Primitive::TriangleStrip:
+				mode = GL_TRIANGLE_STRIP;
+				break;
+
+			default:
+				break;
+		}
+
+		return mode;
+	}
 }
 
 void Renderer::draw(const VertexArrayObject& x, const Shader& s) const
@@ -23,65 +56,23 @@ void Renderer::draw(const VertexArrayObject& x, const Shader& s) const
 	x.bind();
 	s.bind();
 
-	if(x.getIDO().getIndices().empty() == true)
-	{
-		for(const auto& vbo : x.getVBOs())
-		{
-			this->drawArrays(vbo.getPrimitive(), 0, vbo.getVertices().size());
-		}
-	}
-	else
-	{
-		this->drawElements(asx::Primitive::Triangles, x.getIDO().getIndices());
-	}
+	this->drawArrays(x.getPrimitive(), 0, x.getVertices());
 }
 
-void Renderer::drawArrays(Primitive x, int firstVertex, std::size_t count) const
+void Renderer::draw(const ElementBufferObject& x, const Shader& s) const
 {
-	GLenum mode{};
+	x.bind();
+	s.bind();
 
-	switch(x)
-	{
-		case Primitive::Points:
-			mode = GL_POINTS;
-			break;
+	this->drawElements(x.getPrimitive(), x.getIndices());
+}
 
-		case Primitive::LineStrip:
-			mode = GL_LINE_STRIP;
-			break;
-
-		case Primitive::Triangles:
-			mode = GL_TRIANGLES;
-			break;
-
-		default:
-			break;
-	}
-
-	glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(count)));
+void Renderer::drawArrays(Primitive x, int firstVertex, const std::vector<Vertex>& vertices) const
+{
+	glCheck(glDrawArrays(ToGLEnum(x), static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertices.size())));
 }
 
 void Renderer::drawElements(Primitive x, const std::vector<unsigned int>& indices) const
 {
-	GLenum mode{};
-
-	switch(x)
-	{
-		case Primitive::Points:
-			mode = GL_POINTS;
-			break;
-
-		case Primitive::LineStrip:
-			mode = GL_LINE_STRIP;
-			break;
-
-		case Primitive::Triangles:
-			mode = GL_TRIANGLES;
-			break;
-
-		default:
-			break;
-	}
-
-	glCheck(glDrawElements(mode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0));
+	glCheck(glDrawElements(ToGLEnum(x), static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0));
 }
