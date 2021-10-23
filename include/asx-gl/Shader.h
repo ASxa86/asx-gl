@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string_view>
 #include <asx-gl/export.hxx>
+#include <glm/glm.hpp>
+#include <string_view>
 
 namespace asx
 {
@@ -10,10 +11,14 @@ namespace asx
 	public:
 		Shader();
 		~Shader();
-		void loadFromMemory(std::string_view vertex, std::string_view fragment);
+		bool loadFromMemory(std::string_view vertex, std::string_view fragment);
 
 		void bind() const;
 		void unbind() const;
+
+		void setUniform(std::string_view name, const glm::vec4& x) const;
+
+		int getUniformLocation(std::string_view x) const;
 
 	private:
 		unsigned int handle{};

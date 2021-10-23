@@ -7,6 +7,11 @@ using namespace asx;
 constexpr int Binding{0};
 constexpr auto SizeVertex = sizeof(Vertex);
 constexpr int LocPosition{0};
+constexpr int LocColor{1};
+constexpr int LocTexCoord{2};
+constexpr int ComponentCountPosition{sizeof(Vertex::position) / sizeof(decltype(Vertex::position)::value_type)};
+constexpr int ComponentCountColor{sizeof(Vertex::color) / sizeof(decltype(Vertex::color)::value_type)};
+constexpr int ComponentCountTexCoord{sizeof(Vertex::texCoord) / sizeof(decltype(Vertex::texCoord)::value_type)};
 
 VertexArrayObject::VertexArrayObject(Primitive x) : primitive{x}
 {
@@ -16,8 +21,16 @@ VertexArrayObject::VertexArrayObject(Primitive x) : primitive{x}
 
 	// Configure for shaders.
 	glCheck(glEnableVertexArrayAttrib(this->handleVAO, LocPosition));
-	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocPosition, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position)));
+	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocPosition, ComponentCountPosition, GL_FLOAT, GL_FALSE, offsetof(Vertex, position)));
 	glCheck(glVertexArrayAttribBinding(this->handleVAO, LocPosition, Binding));
+
+	glCheck(glEnableVertexArrayAttrib(this->handleVAO, LocColor));
+	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocColor, ComponentCountColor, GL_FLOAT, GL_FALSE, offsetof(Vertex, color)));
+	glCheck(glVertexArrayAttribBinding(this->handleVAO, LocColor, Binding));
+
+	glCheck(glEnableVertexArrayAttrib(this->handleVAO, LocTexCoord));
+	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocTexCoord, ComponentCountColor, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord)));
+	glCheck(glVertexArrayAttribBinding(this->handleVAO, LocTexCoord, Binding));
 }
 
 VertexArrayObject::~VertexArrayObject()

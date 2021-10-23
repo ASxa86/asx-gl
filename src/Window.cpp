@@ -65,6 +65,7 @@ void Window::clear(const glm::vec4& color)
 	glCheck(glViewport(0, 0, this->size().x, this->size().y));
 	glCheck(glClearColor(color.r, color.g, color.b, color.a));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));
+	glEnable(GL_BLEND);
 }
 
 void Window::draw(const VertexArrayObject& x, const Shader& s) const
