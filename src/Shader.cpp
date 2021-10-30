@@ -86,6 +86,11 @@ void Shader::setUniform(std::string_view name, const glm::vec4& x) const
 	glCheck(glUniform4f(this->getUniformLocation(name), x.r, x.g, x.b, x.a));
 }
 
+void Shader::setUniform(std::string_view name, int x) const
+{
+	glCheck(glUniform1i(this->getUniformLocation(name), x));
+}
+
 int Shader::getUniformLocation(std::string_view x) const
 {
 	this->bind();

@@ -35,11 +35,12 @@ constexpr std::string_view ShaderFragment = R"(
 	in vec4 outColor;
 	in vec2 outTexCoord;
 
-	uniform sampler2D ourTexture;
+	uniform sampler2D texture1;
+	uniform sampler2D texture2;
 
 	void main()
 	{
-		FragColor = texture(ourTexture, outTexCoord) * outColor;
+		FragColor = mix(texture(texture1, outTexCoord), texture(texture2, outTexCoord), 0.2);
 	}
 )";
 
@@ -55,13 +56,22 @@ TEST(Window, VertexArrayObject)
 	Window window;
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
+	ASSERT_TRUE(image.loadFromFile("container.jpg"));
+
+	Image face;
+	ASSERT_TRUE(face.loadFromFile("awesomeface.png"));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
 
+	Texture texFace;
+	ASSERT_TRUE(texFace.loadFromImage(face));
+
 	Shader shader;
 	ASSERT_TRUE(shader.loadFromMemory(ShaderVertex, ShaderFragment));
+
+	shader.setUniform("texture1", texture.getHandle());
+	shader.setUniform("texture2", texFace.getHandle());
 
 	VertexArrayObject vao{Primitive::TriangleStrip};
 
@@ -100,6 +110,7 @@ TEST(Window, VertexArrayObject)
 		}
 
 		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
+
 		window.draw(vao, shader);
 		window.display();
 
@@ -119,20 +130,30 @@ TEST(Window, ElementBufferObject)
 	Shader shader;
 	ASSERT_TRUE(shader.loadFromMemory(ShaderVertex, ShaderFragment));
 
+	Image image;
+	ASSERT_TRUE(image.loadFromFile("container.jpg"));
+
+	Texture texture;
+	ASSERT_TRUE(texture.loadFromImage(image));
+
 	ElementBufferObject ebo{Primitive::Triangles};
 
 	std::vector<Vertex> vertices(4);
 	vertices[0].position = {-0.5f, -0.5f, 0.0f};
 	vertices[0].color = {0.7f, 0.3f, 0.25f, 0.5f};
+	vertices[0].texCoord = {0.0f, 0.0f};
 
 	vertices[1].position = {0.5f, -0.5f, 0.0f};
 	vertices[1].color = {0.7f, 0.3f, 0.25f, 0.5f};
+	vertices[1].texCoord = {1.0f, 0.0f};
 
 	vertices[2].position = {0.5f, 0.5f, 0.0f};
 	vertices[2].color = {0.7f, 0.3f, 0.25f, 0.5f};
+	vertices[2].texCoord = {1.0f, 1.0f};
 
 	vertices[3].position = {-0.5f, 0.5f, 0.0f};
 	vertices[3].color = {0.7f, 0.3f, 0.25f, 0.5f};
+	vertices[3].texCoord = {0.0f, 1.0f};
 	ebo.setVertices(vertices);
 
 	std::vector<unsigned int> indices{{0, 1, 3, 1, 2, 3}};

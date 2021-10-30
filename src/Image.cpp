@@ -15,6 +15,7 @@ bool Image::loadFromFile(const std::filesystem::path& x)
 		int width{};
 		int height{};
 
+		stbi_set_flip_vertically_on_load(true);
 		const auto data = (stbi_load(x.string().c_str(), &width, &height, &this->channels, STBI_rgb_alpha));
 
 		if(data != nullptr)
