@@ -18,7 +18,7 @@ struct Window::Impl
 	std::string title;
 	glm::vec<2, int> size{};
 	GLFWwindow* window{nullptr};
-	Renderer renderer;
+	std::unique_ptr<Renderer> renderer;
 	int glfwInitialized{GLFW_FALSE};
 	int gladInitialized{GL_FALSE};
 };
@@ -33,6 +33,11 @@ Window::Window(int width, int height, std::string_view title) : pimpl{width, hei
 		glfwMakeContextCurrent(this->pimpl->window);
 
 		this->pimpl->gladInitialized = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
+
+		if(this->pimpl->gladInitialized == GL_TRUE)
+		{
+			this->pimpl->renderer = std::make_unique<Renderer>();
+		}
 	}
 }
 
@@ -40,6 +45,8 @@ Window::~Window()
 {
 	if(this->pimpl->glfwInitialized == GLFW_TRUE)
 	{
+		this->pimpl->renderer.reset();
+
 		glfwDestroyWindow(this->pimpl->window);
 		glfwTerminate();
 	}
@@ -68,14 +75,19 @@ void Window::clear(const glm::vec4& color)
 	glEnable(GL_BLEND);
 }
 
-void Window::draw(const VertexArrayObject& x, const Shader& s) const
+void Window::draw(const Drawable& x, RenderStates states)
 {
-	this->pimpl->renderer.draw(x, s);
+	this->pimpl->renderer->draw(x, states);
 }
 
-void Window::draw(const ElementBufferObject& x, const Shader& s) const
+void Window::draw(const VertexArrayObject& x, RenderStates states) const
 {
-	this->pimpl->renderer.draw(x, s);
+	this->pimpl->renderer->draw(x, states);
+}
+
+void Window::draw(const ElementBufferObject& x, RenderStates states) const
+{
+	this->pimpl->renderer->draw(x, states);
 }
 
 void Window::display() const noexcept

@@ -6,6 +6,7 @@
 
 #include <asx-gl/ElementBufferObject.h>
 #include <asx-gl/Image.h>
+#include <asx-gl/Sprite.h>
 #include <asx-gl/Texture.h>
 #include <asx-gl/VertexArrayObject.h>
 
@@ -85,6 +86,9 @@ TEST(Window, VertexArrayObject)
 
 	EXPECT_TRUE(window.open());
 
+	RenderStates states;
+	states.shader = &shader;
+
 	auto count = 0;
 	std::vector<std::chrono::duration<double>> frames;
 	frames.reserve(10'000'000);
@@ -100,7 +104,7 @@ TEST(Window, VertexArrayObject)
 		}
 
 		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
-		window.draw(vao, shader);
+		window.draw(vao, states);
 		window.display();
 
 		std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start;
@@ -150,6 +154,9 @@ TEST(Window, ElementBufferObject)
 
 	EXPECT_TRUE(window.open());
 
+	RenderStates states;
+	states.shader = &shader;
+
 	auto count = 0;
 	std::vector<std::chrono::duration<double>> frames;
 	frames.reserve(10'000'000);
@@ -165,7 +172,56 @@ TEST(Window, ElementBufferObject)
 		}
 
 		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
-		window.draw(ebo, shader);
+		window.draw(ebo, states);
+		window.display();
+
+		std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start;
+		frames.push_back(elapsed);
+	}
+
+	const auto sum = std::accumulate(std::begin(frames), std::end(frames), decltype(frames)::value_type::zero());
+	const auto avg = sum / frames.size();
+	std::cout << "Elapsed: " << avg.count() << " FPS: " << 1.0 / avg.count() << "\n";
+}
+
+TEST(Window, Sprite)
+{
+	Window window;
+
+	Image image;
+	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
+
+	Texture texture;
+	ASSERT_TRUE(texture.loadFromImage(image));
+
+	Sprite sprite{texture};
+	sprite.setPosition({-0.5f, 0.0f});
+	sprite.setScale({0.5, 0.5});
+
+	Sprite sprite2{texture};
+	sprite2.setPosition({0.5f, 0.0f});
+	sprite2.setScale({0.5, 0.5});
+	sprite2.setRotation(45.0f);
+
+	EXPECT_TRUE(window.open());
+
+	auto count = 0;
+	std::vector<std::chrono::duration<double>> frames;
+	frames.reserve(10'000'000);
+
+	while(window.open() == true && count < 100000)
+	{
+		auto start = std::chrono::steady_clock::now();
+		count++;
+
+		asx::Event e;
+		while(window.pollEvent(e) == true)
+		{
+		}
+
+		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
+		window.draw(sprite);
+		window.draw(sprite2);
 		window.display();
 
 		std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - start;

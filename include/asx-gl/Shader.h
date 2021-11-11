@@ -18,6 +18,7 @@ namespace asx
 
 		void setUniform(std::string_view name, const glm::vec4& x) const;
 		void setUniform(std::string_view name, int x) const;
+		void setUniform(std::string_view name, const glm::mat4& x) const;
 
 		int getUniformLocation(std::string_view x) const;
 

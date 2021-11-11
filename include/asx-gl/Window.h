@@ -1,5 +1,6 @@
 #pragma once
 
+#include <asx-gl/Drawable.h>
 #include <asx-gl/ElementBufferObject.h>
 #include <asx-gl/Pimpl.h>
 #include <asx-gl/Shader.h>
@@ -38,8 +39,9 @@ namespace asx
 		///
 		///
 		///
-		void draw(const VertexArrayObject& x, const Shader& s) const;
-		void draw(const ElementBufferObject& x, const Shader& s) const;
+		void draw(const Drawable& x, RenderStates states = {});
+		void draw(const VertexArrayObject& x, RenderStates states = {}) const;
+		void draw(const ElementBufferObject& x, RenderStates states = {}) const;
 
 		///
 		///	\brief Perform swap buffers.

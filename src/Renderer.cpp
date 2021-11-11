@@ -48,21 +48,79 @@ namespace
 
 		return mode;
 	}
+
+	constexpr std::string_view ShaderVertex = R"(
+		#version 450 core
+		layout (location = 0) in vec3 pos;
+		layout (location = 1) in vec4 color;
+		layout (location = 2) in vec2 texCoord;
+
+		out vec4 outColor;
+		out vec2 outTexCoord;
+
+		uniform mat4 transform;
+
+		void main()
+		{
+			gl_Position = transform * vec4(pos, 1.0);
+			outColor = color;
+			outTexCoord = texCoord;
+		}
+	)";
+
+	constexpr std::string_view ShaderFragment = R"(
+		#version 450 core
+		out vec4 FragColor;
+
+		in vec4 outColor;
+		in vec2 outTexCoord;
+
+		uniform sampler2D texture1;
+
+		void main()
+		{
+			FragColor = texture(texture1, outTexCoord) * outColor;
+		}
+	)";
 }
 
-void Renderer::draw(const VertexArrayObject& x, const Shader& s) const
+Renderer::Renderer()
+{
+	this->textureShader.loadFromMemory(ShaderVertex, ShaderFragment);
+}
+
+void Renderer::draw(const Drawable& x, RenderStates states)
+{
+	x.draw(*this, states);
+}
+
+void Renderer::draw(const VertexArrayObject& x, RenderStates states) const
 {
 	// Bind VBO and shader
 	x.bind();
-	s.bind();
+
+	if(states.shader == nullptr)
+	{
+		states.shader = &this->textureShader;
+	}
+
+	states.shader->bind();
+	states.shader->setUniform("transform", states.transform);
 
 	this->drawArrays(x.getPrimitive(), 0, x.getVertices());
 }
 
-void Renderer::draw(const ElementBufferObject& x, const Shader& s) const
+void Renderer::draw(const ElementBufferObject& x, RenderStates states) const
 {
 	x.bind();
-	s.bind();
+
+	if(states.shader == nullptr)
+	{
+		states.shader = &this->textureShader;
+	}
+
+	states.shader->bind();
+	states.shader->setUniform("transform", states.transform);
 
 	this->drawElements(x.getPrimitive(), x.getIndices());
 }

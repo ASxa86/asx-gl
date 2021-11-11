@@ -4,6 +4,8 @@
 #include <iostream>
 #include "GLCheck.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 using namespace asx;
 
 Shader::Shader()
@@ -89,6 +91,11 @@ void Shader::setUniform(std::string_view name, const glm::vec4& x) const
 void Shader::setUniform(std::string_view name, int x) const
 {
 	glCheck(glUniform1i(this->getUniformLocation(name), x));
+}
+
+void Shader::setUniform(std::string_view name, const glm::mat4& x) const
+{
+	glCheck(glUniformMatrix4fv(this->getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(x)));
 }
 
 int Shader::getUniformLocation(std::string_view x) const
