@@ -31,7 +31,7 @@ ElementBufferObject::ElementBufferObject(Primitive x) : primitive{x}
 	glCheck(glVertexArrayAttribBinding(this->handleVAO, LocColor, Binding));
 
 	glCheck(glEnableVertexArrayAttrib(this->handleVAO, LocTexCoord));
-	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocTexCoord, ComponentCountColor, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord)));
+	glCheck(glVertexArrayAttribFormat(this->handleVAO, LocTexCoord, ComponentCountTexCoord, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord)));
 	glCheck(glVertexArrayAttribBinding(this->handleVAO, LocTexCoord, Binding));
 }
 

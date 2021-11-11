@@ -36,11 +36,10 @@ constexpr std::string_view ShaderFragment = R"(
 	in vec2 outTexCoord;
 
 	uniform sampler2D texture1;
-	uniform sampler2D texture2;
 
 	void main()
 	{
-		FragColor = mix(texture(texture1, outTexCoord), texture(texture2, outTexCoord), 0.2);
+		FragColor = texture(texture1, outTexCoord) * outColor;
 	}
 )";
 
@@ -56,22 +55,13 @@ TEST(Window, VertexArrayObject)
 	Window window;
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("container.jpg"));
-
-	Image face;
-	ASSERT_TRUE(face.loadFromFile("awesomeface.png"));
+	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
 
-	Texture texFace;
-	ASSERT_TRUE(texFace.loadFromImage(face));
-
 	Shader shader;
 	ASSERT_TRUE(shader.loadFromMemory(ShaderVertex, ShaderFragment));
-
-	shader.setUniform("texture1", texture.getHandle());
-	shader.setUniform("texture2", texFace.getHandle());
 
 	VertexArrayObject vao{Primitive::TriangleStrip};
 
@@ -110,7 +100,6 @@ TEST(Window, VertexArrayObject)
 		}
 
 		window.clear({0.2f, 0.3f, 0.3f, 1.0f});
-
 		window.draw(vao, shader);
 		window.display();
 
@@ -131,7 +120,7 @@ TEST(Window, ElementBufferObject)
 	ASSERT_TRUE(shader.loadFromMemory(ShaderVertex, ShaderFragment));
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("container.jpg"));
+	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
@@ -165,7 +154,7 @@ TEST(Window, ElementBufferObject)
 	std::vector<std::chrono::duration<double>> frames;
 	frames.reserve(10'000'000);
 
-	while(window.open() == true && count < 10000)
+	while(window.open() == true && count < 1000000)
 	{
 		auto start = std::chrono::steady_clock::now();
 		count++;
