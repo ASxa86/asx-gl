@@ -30,15 +30,7 @@ bool Texture::create(unsigned int width, unsigned int height)
 
 			this->bind();
 
-			// if(this->channels == 3)
-			//{
-			//	glCheck(glTextureStorage2D(this->handle, 1, GL_RGB8, width, height));
-			//}
-
-			// if(this->channels == 4)
-			//{
 			glCheck(glTextureStorage2D(this->handle, 1, GL_RGBA8, width, height));
-			//}
 
 			glCheck(glTextureParameteri(this->handle, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
 			glCheck(glTextureParameteri(this->handle, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));

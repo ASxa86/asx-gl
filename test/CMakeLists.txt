@@ -2,6 +2,8 @@ project(test-asx-gl)
 
 add_executable(${PROJECT_NAME})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DTEST_IMAGE="${CMAKE_CURRENT_SOURCE_DIR}/test.png")
+
 target_sources(${PROJECT_NAME} PRIVATE
 	Window.test.cpp
 )

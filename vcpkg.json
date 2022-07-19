@@ -1,0 +1,14 @@
+{
+  "name": "asx-gl",
+  "version-string": "2022.7.18",
+  "port-version": 1,
+  "description": "Modern C++ OpenGL",
+  "homepage": "https://github.com/asxa86/asx-gl/",
+  "dependencies": [
+    "glfw3",
+    "glad",
+    "stb",
+    "glm",
+    "gtest"
+  ]
+}

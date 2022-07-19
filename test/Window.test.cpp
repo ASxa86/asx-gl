@@ -44,6 +44,8 @@ constexpr std::string_view ShaderFragment = R"(
 	}
 )";
 
+constexpr std::string_view TestImage{TEST_IMAGE};
+
 namespace asx
 {
 	class Event
@@ -56,7 +58,7 @@ TEST(Window, VertexArrayObject)
 	Window window;
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
+	ASSERT_TRUE(image.loadFromFile(TestImage));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
@@ -124,7 +126,7 @@ TEST(Window, ElementBufferObject)
 	ASSERT_TRUE(shader.loadFromMemory(ShaderVertex, ShaderFragment));
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
+	ASSERT_TRUE(image.loadFromFile(TestImage));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
@@ -189,7 +191,7 @@ TEST(Window, Sprite)
 	Window window;
 
 	Image image;
-	ASSERT_TRUE(image.loadFromFile("wall.jpg"));
+	ASSERT_TRUE(image.loadFromFile(TestImage));
 
 	Texture texture;
 	ASSERT_TRUE(texture.loadFromImage(image));
